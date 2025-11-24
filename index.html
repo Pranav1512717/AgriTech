@@ -1,0 +1,2042 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriTech- Modern Crop Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-green: #2D5016;
+            --accent-green: #4A7C59;
+            --light-green: #A4C3A2;
+            --warm-yellow: #F4A261;
+            --earth-brown: #8B4513;
+            --soft-cream: #F9F7E8;
+            --white: #FFFFFF;
+            --dark-text: #2C3E50;
+            --light-text: #7F8C8D;
+            --gradient-primary: linear-gradient(135deg, #2D5016 0%, #4A7C59 100%);
+            --gradient-accent: linear-gradient(135deg, #F4A261 0%, #E76F51 100%);
+            --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--dark-text);
+            background: var(--soft-cream);
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.05;
+            background-image:
+                radial-gradient(circle at 25% 25%, var(--accent-green) 2px, transparent 2px),
+                radial-gradient(circle at 75% 75%, var(--warm-yellow) 2px, transparent 2px);
+            background-size: 100px 100px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(1deg);
+            }
+        }
+
+        /* Header & Navigation */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(74, 124, 89, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark-text);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            position: relative;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--accent-green);
+            background: rgba(74, 124, 89, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .mobile-menu {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .mobile-menu span {
+            width: 25px;
+            height: 3px;
+            background: var(--dark-text);
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+
+        /* Page Container */
+        .page {
+            display: none;
+            min-height: calc(100vh- 80px);
+            padding: 2rem 0;
+        }
+
+        .page.active {
+            display: block;
+            animation: pageSlideIn 0.5s ease;
+        }
+
+        @keyframes pageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* CommonStyles */
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            color: var(--primary-green);
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow-soft);
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--accent-green);
+            border: 2px solid var(--accent-green);
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-secondary:hover {
+            background: var(--accent-green);
+            color: white;
+        }
+
+        /* HOMEPAGESTYLES*/
+        .hero {
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, rgba(45, 80, 22, 0.05) 0%, rgba(244, 162, 97, 0.05) 100%);
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-text p {
+            font-size: 1.2rem;
+            color: var(--light-text);
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        .hero-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero-circle {
+            width: 300px;
+            height: 300px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 3s ease-in-out infinite;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .hero-circle::before {
+            content: ' ';
+            font-size: 6rem;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .stats-section {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 4rem 2rem;
+            margin: 4rem 0;
+            border-radius: 30px;
+        }
+
+        .stats-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .stat-item h4 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-item p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* FERTILIZER PAGE STYLES */
+        .fertilizer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .fertilizer-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-soft);
+            transition: all 0.3s ease;
+        }
+
+        .fertilizer-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .fertilizer-type {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .organic {
+            background: rgba(76, 175, 80, 0.1);
+            color: #4CAF50;
+        }
+
+        .synthetic {
+            background: rgba(33, 150, 243, 0.1);
+            color: #2196F3;
+        }
+
+        .bio {
+            background: rgba(255, 152, 0, 0.1);
+            color: #FF9800;
+        }
+
+        .search-bar {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 3rem;
+        }
+
+        .search-inputs {
+            display: grid;
+            grid-template-columns: 2fr 1fr auto;
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .search-inputs input,
+        .search-inputs select {
+            padding: 1rem;
+            border: 2px solid rgba(74, 124, 89, 0.1);
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        /* CROPPAGESTYLES */
+        .crop-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--shadow-soft);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .category-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .crop-calendar {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 3rem;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .month-card {
+            padding: 1rem;
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(74, 124, 89, 0.05) 0%, rgba(244, 162, 97, 0.05) 100%);
+            text-align: center;
+        }
+
+        /* ANALYTICS PAGE STYLES */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-soft);
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--accent-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 2rem;
+        }
+
+        /* WEATHERPAGESTYLES*/
+        .weather-dashboard {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .current-weather {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: var(--shadow-soft);
+            text-align: center;
+        }
+
+        .temperature {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--accent-green);
+            margin-bottom: 1rem;
+        }
+
+        .weather-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .detail-item {
+            padding: 1rem;
+            background: rgba(74, 124, 89, 0.05);
+            border-radius: 10px;
+        }
+
+        .forecast-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .forecast-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(74, 124, 89, 0.1);
+        }
+
+        /* CONTACTPAGESTYLES */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            margin-bottom: 4rem;
+        }
+
+        .contact-info {
+            background: rgba(255, 255, 255, 0);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .contact-icon {
+            font-size: 2rem;
+            margin-right: 1rem;
+            color: var(--accent-green);
+        }
+
+        .contact-form {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark-text);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(74, 124, 89, 0.1);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-green);
+            box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.1);
+        }
+
+        /* FOOTER*/
+        .footer {
+            background: linear-gradient(135deg, var(--primary-green) 0%, #1a3a0f 100%);
+            color: white;
+            margin-top: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--warm-yellow), transparent);
+        }
+
+        .footer-main {
+            padding: 4rem 2rem 2rem;
+            position: relative;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr;
+            gap: 3rem;
+        }
+
+        .footer-section h4.footer-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--warm-yellow);
+            position: relative;
+        }
+
+        .footer-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background: var(--warm-yellow);
+            border-radius: 1px;
+        }
+
+        /* Company Info Section */
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+            margin-right: 0.5rem;
+        }
+
+        .footer-description {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .social-link:hover {
+            background: var(--warm-yellow);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(244, 162, 97, 0.4);
+        }
+
+        /* Footer Links */
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            padding-left: 1rem;
+        }
+
+        .footer-links a::before {
+            content: '▸ ';
+            position: absolute;
+            left: 0;
+            color: var(--warm-yellow);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--warm-yellow);
+            padding-left: 1.2rem;
+        }
+
+        .footer-links a:hover::before {
+            opacity: 1;
+        }
+
+        /* Contact Info */
+        .contact-info .contact-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .contact-info .contact-icon {
+            font-size: 1.2rem;
+            margin-right: 1rem;
+            margin-top: 0.2rem;
+            color: var(--warm-yellow);
+        }
+
+        .contact-info p {
+            color: rgba(255, 255, 255, 0.8);
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        /* Newsletter Section */
+        .newsletter-section {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 2.5rem 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .newsletter-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .newsletter-text h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--warm-yellow);
+        }
+
+        .newsletter-text p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 0;
+            margin-bottom: 0.5rem;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-right: none;
+            border-radius: 10px 0 0 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--warm-yellow);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .subscribe-btn {
+            padding: 1rem 2rem;
+            background: var(--warm-yellow);
+            color: var(--primary-green);
+            border: 2px solid var(--warm-yellow);
+            border-radius: 0 10px 10px 0;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .subscribe-btn:hover {
+            background: transparent;
+            color: var(--warm-yellow);
+            transform: translateY(-2px);
+        }
+
+        .newsletter-privacy {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin: 0;
+        }
+
+        /* Bottom Footer */
+        .footer-bottom {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-bottom-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-bottom-links {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .footer-bottom-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-bottom-links a:hover {
+            color: var(--warm-yellow);
+        }
+
+        .separator {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .certifications {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .cert-badge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            background: var(--warm-yellow);
+            color: var(--primary-green);
+            border: none;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            z-index: 1000;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            background: var(--primary-green);
+            color: var(--warm-yellow);
+            transform: translateY(-3px);
+        }
+
+        /* Responsive Design */
+        @media(max-width: 1200px) {
+            .footer-content {
+                grid-template-columns: 2fr 1fr 1fr 1fr;
+            }
+
+            .footer-content .footer-section:last-child {
+                grid-column: 1 /-1;
+                margin-top: 2rem;
+            }
+        }
+
+        @media(max-width: 768px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .newsletter-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 2rem;
+            }
+
+            .footer-bottom-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .footer-bottom-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .input-group input {
+                border-radius: 10px;
+                border: 2px solid rgba(255, 255, 255, 0.2);
+                margin-bottom: 1rem;
+            }
+
+            .subscribe-btn {
+                border-radius: 10px;
+                justify-content: center;
+            }
+        }
+
+        @media(max-width: 480px) {
+            .footer-main {
+                padding: 2rem 1rem;
+            }
+
+            .newsletter-section {
+                padding: 2rem 1rem;
+            }
+
+            .footer-bottom {
+                padding: 1rem;
+            }
+
+            .social-links {
+                justify-content: center;
+            }
+
+            .certifications {
+                justify-content: center;
+            }
+        }
+
+        /* RESPONSIVE DESIGN */
+        @media(max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 1rem;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                border-radius: 0 0 10px 10px;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .mobile-menu {
+                display: flex;
+            }
+
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-circle {
+                width: 200px;
+                height: 200px;
+            }
+
+            .hero-circle::before {
+                font-size: 4rem;
+            }
+
+            .contact-grid,
+            .weather-dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .search-inputs {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media(max-width: 480px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .hero-text h1 {
+                font-size: 2rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-item h4 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-pattern"></div>
+    <!-- Header-->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo" onclick="navigateTo('home')"> AgriTech</div>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#" onclick="navigateTo('home')" class="nav-link active">Home</a></li>
+                <li><a href="#" onclick="navigateTo('fertilizers')" class="nav-link">Fertilizers</a></li>
+                <li><a href="#" onclick="navigateTo('crops')" class="nav-link">Crops</a></li>
+                <li><a href="#" onclick="navigateTo('analytics')" class="nav-link">Analytics</a></li>
+                <li><a href="#" onclick="navigateTo('weather')" class="nav-link">Weather</a></li>
+                <li><a href="#" onclick="navigateTo('marketplace')" class="nav-link">Marketplace</a></li>
+                <li><a href="#" onclick="navigateTo('contact')" class="nav-link">Contact</a></li>
+            </ul>
+            <div class="mobile-menu" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+    <!-- HOME PAGE-->
+    <div id="home" class="page active">
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Smart Agriculture for Tomorrow</h1>
+                    <p>Revolutionize your farming with our comprehensive crop management system. Monitor, analyze, and
+                        optimize your agricultural operations with cutting-edge technology.</p>
+                    <a href="#" onclick="navigateTo('fertilizers')" class="btn-primary">Explore Modules</a>
+                </div>
+                <div class="hero-visual">
+                    <div class="hero-circle"></div>
+                </div>
+            </div>
+        </section>
+        <section class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h4 id="farmers-count">1000</h4>
+                    <p>Active Farmers</p>
+                </div>
+                <div class="stat-item">
+                    <h4 id="crops-count">50</h4>
+                    <p>Crop Varieties</p>
+                </div>
+                <div class="stat-item">
+                    <h4 id="fertilizers-count">200</h4>
+                    <p>Fertilizer Types</p>
+                </div>
+                <div class="stat-item">
+                    <h4 id="yield-improvement">35</h4>
+                    <p>%Yield Improvement</p>
+                </div>
+            </div>
+        </section>
+        <div class="container">
+            <h2 class="section-title">Quick Access Modules</h2>
+            <div class="fertilizer-grid">
+                <div class="card" style="padding: 2rem; cursor: pointer;" onclick="navigateTo('fertilizers')">
+                    <div style="font-size: 3rem; text-align: center; margin-bottom: 1rem;"> </div>
+                    <h3 style="color: var(--primary-green); margin-bottom: 1rem;">Fertilizer Management</h3>
+                    <p style="color: var(--light-text);">Manage your fertilizer inventory and find the perfect nutrients
+                        for your
+                        crops.</p>
+                </div>
+                <div class="card" style="padding: 2rem; cursor: pointer;" onclick="navigateTo('crops')">
+                    <div style="font-size: 3rem; text-align: center; margin-bottom: 1rem;"> </div>
+                    <h3 style="color: var(--primary-green); margin-bottom: 1rem;">Crop Planning</h3>
+                    <p style="color: var(--light-text);">Plan your crop cycles and track growth stages with precision.
+                    </p>
+                </div>
+                <div class="card" style="padding: 2rem; cursor: pointer;" onclick="navigateTo('weather')">
+                    <div style="font-size: 3rem; text-align: center; margin-bottom: 1rem;"> </div>
+                    <h3 style="color: var(--primary-green); margin-bottom: 1rem;">Weather Insights</h3>
+                    <p style="color: var(--light-text);">Get real-time weather data and forecasts for better decisions.
+                    </p>
+                </div>
+                <div class="card" style="padding: 2rem; cursor: pointer;" onclick="navigateTo('marketplace')">
+                    <div style="font-size: 3rem; text-align: center; margin-bottom: 1rem;"> </div>
+                    <h3 style="color: var(--primary-green); margin-bottom: 1rem;">Marketplace</h3>
+                    <p style="color: var(--light-text);">Buy and sell agricultural products in our digital marketplace.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- FERTILIZERS PAGE-->
+    <div id="fertilizers" class="page">
+        <div class="container">
+            <h2 class="section-title">Fertilizer Management System</h2>
+            <div class="search-bar">
+                <h3 style="margin-bottom: 1rem;"> Search Fertilizers</h3>
+                <div class="search-inputs">
+                    <input type="text" id="fertilizer-search" placeholder="Search fertilizer name...">
+                    <select id="fertilizer-type-filter">
+                        <option value="">All Types</option>
+                        <option value="organic">Organic</option>
+                        <option value="synthetic">Synthetic</option>
+                        <option value="bio">Bio-fertilizer</option>
+                    </select>
+                    <button class="btn-primary" onclick="searchFertilizers()">Search</button>
+                </div>
+            </div>
+            <div class="fertilizer-grid" id="fertilizer-results">
+                <div class="fertilizer-card">
+                    <div class="fertilizer-type organic">Organic</div>
+                    <h3>Compost Manure</h3>
+                    <p><strong>NPK Ratio:</strong> 2-1-1</p>
+                    <p><strong>Application Rate:</strong> 5-10 tons/hectare</p>
+                    <p><strong>Best For:</strong> All crops, soil conditioning</p>
+                    <p style="color: var(--light-text); margin-top: 1rem;">Rich in organic matter, improves soil
+                        structure and water
+                        retention.</p>
+                    <button class="btn-secondary" style="width: 100%; margin-top: 1rem;">View Details</button>
+                </div>
+                <div class="fertilizer-card">
+                    <div class="fertilizer-type synthetic">Synthetic</div>
+                    <h3>Urea (46-0-0)</h3>
+                    <p><strong>NPK Ratio:</strong> 46-0-0</p>
+                    <p><strong>Application Rate:</strong> 200-300 kg/hectare</p>
+                    <p><strong>Best For:</strong> Nitrogen-deficient crops</p>
+                    <p style="color: var(--light-text); margin-top: 1rem;">High nitrogen content for rapid green growth
+                        and leaf
+                        development.</p>
+                    <button class="btn-secondary" style="width: 100%; margin-top: 1rem;">View Details</button>
+                </div>
+                <div class="fertilizer-card">
+                    <div class="fertilizer-type synthetic">Synthetic</div>
+                    <h3>DAP(18-46-0)</h3>
+                    <p><strong>NPK Ratio:</strong> 18-46-0</p>
+                    <p><strong>Application Rate:</strong> 100-150 kg/hectare</p>
+                    <p><strong>Best For:</strong> Root development, flowering</p>
+                    <p style="color: var(--light-text); margin-top: 1rem;">High phosphorus content ideal for root growth
+                        and early
+                        plant development.</p>
+                    <button class="btn-secondary" style="width: 100%; margin-top: 1rem;">View Details</button>
+                </div>
+                <div class="fertilizer-card">
+                    <div class="fertilizer-type bio">Bio-fertilizer</div>
+                    <h3>Rhizobium Culture</h3>
+                    <p><strong>NPK Ratio:</strong> N/A (Biological)</p>
+                    <p><strong>Application Rate:</strong> 200-250g/acre</p>
+                    <p><strong>Best For:</strong> Legume crops</p>
+                    <p style="color: var(--light-text); margin-top: 1rem;">Nitrogen-fixing bacteria that form symbiotic
+                        relationships
+                        with legume roots.</p>
+                    <button class="btn-secondary" style="width: 100%; margin-top: 1rem;">View Details</button>
+                </div>
+                <div class="fertilizer-card">
+                    <div class="fertilizer-type organic">Organic</div>
+                    <h3>Bone Meal</h3>
+                    <p><strong>NPK Ratio:</strong> 3-15-0</p>
+                    <p><strong>Application Rate:</strong> 1-2 kg/sq meter</p>
+                    <p><strong>Best For:</strong> Phosphorus deficiency</p>
+                    <p style="color: var(--light-text); margin-top: 1rem;">Slow-release phosphorus source excellent for
+                        root
+                        development.</p>
+                    <button class="btn-secondary" style="width: 100%; margin-top: 1rem;">View Details</button>
+                </div>
+                <div class="fertilizer-card">
+                    <div class="fertilizer-type synthetic">Synthetic</div>
+                    <h3>Potash (0-0-60)</h3>
+                    <p><strong>NPK Ratio:</strong> 0-0-60</p>
+                    <p><strong>Application Rate:</strong> 80-120 kg/hectare</p>
+                    <p><strong>Best For:</strong> Fruit development, disease resistance</p>
+                    <p style="color: var(--light-text); margin-top: 1rem;">High potassium content for improved fruit
+                        quality and
+                        plant immunity.</p>
+                    <button class="btn-secondary" style="width: 100%; margin-top: 1rem;">View Details</button>
+                </div>
+            </div>
+            <div class="card" style="padding: 2rem; margin-top: 3rem;">
+                <h3 style="color: var(--primary-green); margin-bottom: 1.5rem;">➕ Add New Fertilizer</h3>
+                <form id="add-fertilizer-form">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                        <div class="form-group">
+                            <label>Fertilizer Name</label>
+                            <input type="text" placeholder="Enter name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Type</label>
+                            <select required>
+                                <option value="">Select type</option>
+                                <option value="organic">Organic</option>
+                                <option value="synthetic">Synthetic</option>
+                                <option value="bio">Bio-fertilizer</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>NPK Ratio</label>
+                            <input type="text" placeholder="e.g., 10-20-10" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Application Rate</label>
+                            <input type="text" placeholder="e.g., 100-150 kg/hectare" required>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label>Description</label>
+                        <textarea rows="3" placeholder="Enter fertilizer description and best use cases"></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary" style="margin-top: 1rem;">Add Fertilizer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- CROPS PAGE-->
+    <div id="crops" class="page">
+        <div class="container">
+            <h2 class="section-title">Crop Management System</h2>
+            <div class="crop-categories">
+                <div class="category-card" onclick="showCropDetails('cereals')">
+                    <div class="category-icon"> </div>
+                    <h3>Cereals</h3>
+                    <p>Rice, Wheat, Corn, Barley</p>
+                </div>
+                <div class="category-card" onclick="showCropDetails('legumes')">
+                    <div class="category-icon"> </div>
+                    <h3>Legumes</h3>
+                    <p>Beans, Peas, Lentils, Chickpeas</p>
+                </div>
+                <div class="category-card" onclick="showCropDetails('vegetables')">
+                    <div class="category-icon"> </div>
+                    <h3>Vegetables</h3>
+                    <p>Tomatoes, Potatoes, Onions, Cabbage</p>
+                </div>
+                <div class="category-card" onclick="showCropDetails('fruits')">
+                    <div class="category-icon"> </div>
+                    <h3>Fruits</h3>
+                    <p>Apples, Oranges, Mangoes, Grapes</p>
+                </div>
+            </div>
+            <div class="crop-calendar">
+                <h3 style="margin-bottom: 2rem; color: var(--primary-green);"> Crop Calendar</h3>
+                <div class="calendar-grid">
+                    <div class="month-card">
+                        <h4>January</h4>
+                        <p> Wheatharvesting</p>
+                        <p> Vegetable planting</p>
+                    </div>
+                    <div class="month-card">
+                        <h4>February</h4>
+                        <p> Cornpreparation</p>
+                        <p> Tomatoplanting</p>
+                    </div>
+                    <div class="month-card">
+                        <h4>March</h4>
+                        <p> Ricepreparation</p>
+                        <p> Legumeplanting</p>
+                    </div>
+                    <div class="month-card">
+                        <h4>April</h4>
+                        <p> Cornplanting</p>
+                        <p> Potatoplanting</p>
+                    </div>
+                    <div class="month-card">
+                        <h4>May</h4>
+                        <p> Ricetransplanting</p>
+                        <p> Tomatocare</p>
+                    </div>
+                    <div class="month-card">
+                        <h4>June</h4>
+                        <p> Corncare</p>
+                        <p> Legumecare</p>
+                    </div>
+                </div>
+            </div>
+            <div class="fertilizer-grid">
+                <div class="card" style="padding: 2rem;">
+                    <h3 style="color: var(--primary-green); margin-bottom: 1rem;"> Current Crops</h3>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Rice Field A:</strong> Flowering Stage (Day 65)
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Wheat Field B:</strong> Grain Filling (Day 85)
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Tomato Greenhouse:</strong> Fruit Development (Day 45)
+                    </div>
+                    <button class="btn-secondary">View All Crops</button>
+                </div>
+                <div class="card" style="padding: 2rem;">
+                    <h3 style="color: var(--primary-green); margin-bottom: 1rem;"> Growth Analytics</h3>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Average Growth Rate:</strong> 95% of expected
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Pest Issues:</strong> 2 fields require attention
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Water Usage:</strong> 15% below optimal
+                    </div>
+                    <button class="btn-secondary">View Detailed Report</button>
+                </div>
+                <div class="card" style="padding: 2rem;">
+                    <h3 style="color: var(--primary-green); margin-bottom: 1rem;"> Alerts & Reminders</h3>
+                    <div style="margin-bottom: 1rem; color: #e74c3c;">
+                        <strong> Urgent:</strong> Field C needs irrigation
+                    </div>
+                    <div style="margin-bottom: 1rem; color: #f39c12;">
+                        <strong> Warning:</strong> Pest detected in Field A
+                    </div>
+                    <div style="margin-bottom: 1rem; color: #27ae60;">
+                        <strong>✅ Reminder:</strong> Fertilize tomatoes tomorrow
+                    </div>
+                    <button class="btn-secondary">Manage Alerts</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ANALYTICS PAGE-->
+    <div id="analytics" class="page">
+        <div class="container">
+            <h2 class="section-title">Farm Analytics Dashboard</h2>
+            <div class="dashboard-grid">
+                <div class="metric-card">
+                    <div class="metric-value">1,245</div>
+                    <p>Total Hectares</p>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">85%</div>
+                    <p>Crop Health Score</p>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">$125K</div>
+                    <p>Expected Revenue</p>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">23</div>
+                    <p>Active Fields</p>
+                </div>
+            </div>
+            <div class="chart-container">
+                <h3 style="margin-bottom: 2rem; color: var(--primary-green);"> Yield Trends (Last 12 Months)</h3>
+                <div style="height: 300px; background: linear-gradient(135deg, rgba(74, 124, 89, 0.1) 0%, rgba(244, 162, 97, 0.1)
+ 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--light-text);">
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;"> </div>
+                        <p>Interactive Chart Coming Soon</p>
+                    </div>
+                </div>
+            </div>
+            <div class="fertilizer-grid">
+                <div class="chart-container">
+                    <h3 style="margin-bottom: 1.5rem; color: var(--primary-green);"> Water Usage</h3>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; text-align: center;">
+                        <div>
+                            <div style="font-size: 2rem; font-weight: 800; color: var(--accent-green);">2,450L</div>
+                            <p>This Week</p>
+                        </div>
+                        <div>
+                            <div style="font-size: 2rem; font-weight: 800; color: var(--warm-yellow);">18,320L</div>
+                            <p>This Month</p>
+                        </div>
+                        <div>
+                            <div style="font-size: 2rem; font-weight: 800; color: var(--primary-green);">156,780L</div>
+                            <p>This Year</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3 style="margin-bottom: 1.5rem; color: var(--primary-green);"> Fertilizer Usage</h3>
+                    <div style="margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Nitrogen</span>
+                            <span>75%</span>
+                        </div>
+                        <div style="background: #e0e0e0; height: 8px; border-radius: 4px;">
+                            <div style="background: var(--accent-green); width: 75%; height: 100%; border-radius: 4px;">
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Phosphorus</span>
+                            <span>60%</span>
+                        </div>
+                        <div style="background: #e0e0e0; height: 8px; border-radius: 4px;">
+                            <div style="background: var(--warm-yellow); width: 60%; height: 100%; border-radius: 4px;">
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Potassium</span>
+                            <span>45%</span>
+                        </div>
+                        <div style="background: #e0e0e0; height: 8px; border-radius: 4px;">
+                            <div
+                                style="background: var(--primary-green); width: 45%; height: 100%; border-radius: 4px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- WEATHER PAGE-->
+    <div id="weather" class="page">
+        <div class="container">
+            <h2 class="section-title">Weather Dashboard</h2>
+            <div class="weather-dashboard">
+                <div class="current-weather">
+                    <h3 style="margin-bottom: 1rem; color: var(--primary-green);">Current Weather</h3>
+                    <div class="temperature">28°C</div>
+                    <p style="font-size: 1.2rem; color: var(--light-text); margin-bottom: 2rem;">Partly Cloudy</p>
+                    <div class="weather-details">
+                        <div class="detail-item">
+                            <strong>Humidity</strong>
+                            <p>65%</p>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Wind Speed</strong>
+                            <p>12 km/h</p>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Pressure</strong>
+                            <p>1013 hPa</p>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Visibility</strong>
+                            <p>10 km</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="forecast-card">
+                    <h3 style="margin-bottom: 1.5rem; color: var(--primary-green);">5-Day Forecast</h3>
+                    <div class="forecast-item">
+                        <span>Monday</span>
+                        <span> 30°/22°</span>
+                    </div>
+                    <div class="forecast-item">
+                        <span>Tuesday</span>
+                        <span> 28°/20°</span>
+                    </div>
+                    <div class="forecast-item">
+                        <span>Wednesday</span>
+                        <span> 25°/18°</span>
+                    </div>
+                    <div class="forecast-item">
+                        <span>Thursday</span>
+                        <span>⛅27°/19°</span>
+                    </div>
+                    <div class="forecast-item" style="border-bottom: none;">
+                        <span>Friday</span>
+                        <span> 31°/23°</span>
+                    </div>
+                </div>
+            </div>
+            <div class="fertilizer-grid">
+                <div class="card" style="padding: 2rem;">
+                    <h3 style="color: var(--primary-green); margin-bottom: 1rem;"> Rainfall Data</h3>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Today:</strong> 0mm
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>This Week:</strong> 12mm
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>This Month:</strong> 45mm
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Annual Average:</strong> 850mm
+                    </div>
+                </div>
+                <div class="card" style="padding: 2rem;">
+                    <h3 style="color: var(--primary-green); margin-bottom: 1rem;"> Temperature Trends</h3>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>High:</strong> 35°C (Last Week)
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Low:</strong> 15°C (Last Week)
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Average:</strong> 26°C
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Optimal Range:</strong> 22-30°C
+                    </div>
+                </div>
+                <div class="card" style="padding: 2rem;">
+                    <h3 style="color: var(--primary-green); margin-bottom: 1rem;"> Weather Alerts</h3>
+                    <div style="margin-bottom: 1rem; padding: 0.5rem; background: rgba(231, 76, 60, 0.1); border-radius: 5px;
+ color: #e74c3c;">
+                        <strong>Heat Wave Warning:</strong> Expected next week
+                    </div>
+                    <div style="margin-bottom: 1rem; padding: 0.5rem; background: rgba(52, 152, 219, 0.1); border-radius: 5px;
+ color: #3498db;">
+                        <strong>Rain Forecast:</strong> Light showers Wednesday
+                    </div>
+                    <div
+                        style="padding: 0.5rem; background: rgba(46, 204, 113, 0.1); border-radius: 5px; color: #2ecc71;">
+                        <strong>Good Conditions:</strong> Perfect for irrigation
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- MARKETPLACE PAGE-->
+    <div id="marketplace" class="page">
+        <div class="container">
+            <h2 class="section-title">Agricultural Marketplace</h2>
+            <div class="search-bar">
+                <h3 style="margin-bottom: 1rem;"> Browse Products</h3>
+                <div class="search-inputs">
+                    <input type="text" placeholder="Search products...">
+                    <select>
+                        <option value="">All Categories</option>
+                        <option value="seeds">Seeds</option>
+                        <option value="fertilizers">Fertilizers</option>
+                        <option value="equipment">Equipment</option>
+                        <option value="produce">Fresh Produce</option>
+                    </select>
+                    <button class="btn-primary">Search</button>
+                </div>
+            </div>
+            <div class="fertilizer-grid">
+                <div class="card" style="padding: 2rem;">
+                    <div style="font-size: 3rem; text-align: center; margin-bottom: 1rem;"> </div>
+                    <h3 style="color: var(--primary-green); margin-bottom: 1rem;">Premium Seeds</h3>
+                    <p style="color: var(--light-text); margin-bottom: 1rem;">High-yield variety seeds for maximum
+                        productivity</p>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                        <span><strong>Price:</strong> $25/kg</span>
+                        <span><strong>Stock:</strong> 500kg</span>
+                    </div>
+                    <button class="btn-primary" style="width: 100%;">Add to Cart</button>
+                </div>
+                <div class="card" style="padding: 2rem;">
+                    <div style="font-size: 3rem; text-align: center; margin-bottom: 1rem;"> </div>
+                    <h3 style="color: var(--primary-green); margin-bottom: 1rem;">Farm Equipment</h3>
+                    <p style="color: var(--light-text); margin-bottom: 1rem;">Modern tractors and farming machinery</p>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                        <span><strong>Price:</strong> $15,000</span>
+                        <span><strong>Condition:</strong> New</span>
+                    </div>
+                    <button class="btn-primary" style="width: 100%;">View Details</button>
+                </div>
+                <div class="card" style="padding: 2rem;">
+                    <div style="font-size: 3rem; text-align: center; margin-bottom: 1rem;"> </div>
+                    <h3 style="color: var(--primary-green); margin-bottom: 1rem;">Fresh Produce</h3>
+                    <p style="color: var(--light-text); margin-bottom: 1rem;">Organic vegetables directly from farms</p>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                        <span><strong>Price:</strong> $3/kg</span>
+                        <span><strong>Quality:</strong> Organic</span>
+                    </div>
+                    <button class="btn-primary" style="width: 100%;">Buy Now</button>
+                </div>
+                <div class="card" style="padding: 2rem;">
+                    <div style="font-size: 3rem; text-align: center; margin-bottom: 1rem;"> </div>
+                    <h3 style="color: var(--primary-green); margin-bottom: 1rem;">Fertilizers</h3>
+                    <p style="color: var(--light-text); margin-bottom: 1rem;">Quality fertilizers for enhanced crop
+                        growth</p>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                        <span><strong>Price:</strong> $45/bag</span>
+                        <span><strong>Type:</strong> NPK 10-20-10</span>
+                    </div>
+                    <button class="btn-primary" style="width: 100%;">Add to Cart</button>
+                </div>
+            </div>
+            <div class="card" style="padding: 2rem; margin-top: 3rem;">
+                <h3 style="color: var(--primary-green); margin-bottom: 1.5rem;"> Sell Your Products</h3>
+                <p style="margin-bottom: 2rem; color: var(--light-text);">List your agricultural products and reach
+                    thousands of
+                    buyers</p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                    <div class="form-group">
+                        <label>Product Name</label>
+                        <input type="text" placeholder="Enter product name">
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select>
+                            <option value="">Select category</option>
+                            <option value="seeds">Seeds</option>
+                            <option value="fertilizers">Fertilizers</option>
+                            <option value="equipment">Equipment</option>
+                            <option value="produce">Fresh Produce</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Price</label>
+                        <input type="number" placeholder="Enter price">
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity</label>
+                        <input type="number" placeholder="Available quantity">
+                    </div>
+                </div>
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label>Description</label>
+                    <textarea rows="3" placeholder="Product description, quality details, etc."></textarea>
+                </div>
+                <button class="btn-primary" style="margin-top: 1rem;">List Product</button>
+            </div>
+        </div>
+    </div>
+    <!-- CONTACT PAGE-->
+    <div id="contact" class="page">
+        <div class="container">
+            <h2 class="section-title">Contact Us</h2>
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <h3 style="color: var(--primary-green); margin-bottom: 2rem;">Get in Touch</h3>
+                    <div class="contact-item">
+                        <div class="contact-icon"> </div>
+                        <div>
+                            <h4>Address</h4>
+                            <p style="color: #2196F3;">123 Agriculture Street<br>Farm City, FC 12345</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon"> </div>
+                        <div>
+                            <h4>Phone</h4>
+                            <p style="color: #2196F3;">+1 (555) 123-4567</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon"> </div>
+                        <div>
+                            <h4>Email</h4>
+                            <p style="color: #2196F3;">info@agritech.com</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon"> </div>
+                        <div>
+                            <h4>Business Hours</h4>
+                            <p style="color: #2196F3;">Mon- Fri: 9:00 AM- 6:00 PM<br>Sat: 9:00 AM- 4:00 PM</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <h3 style="color: var(--primary-green); margin-bottom: 2rem;">Send Message</h3>
+                    <form>
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" placeholder="Your full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" placeholder="your.email@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Subject</label>
+                            <select required>
+                                <option value="">Select subject</option>
+                                <option value="support">Technical Support</option>
+                                <option value="sales">Sales Inquiry</option>
+                                <option value="partnership">Partnership</option>
+                                <option value="feedback">Feedback</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Message</label>
+                            <textarea rows="5" placeholder="Your message here..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary" style="width: 100%;">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- FOOTER-->
+    <footer class="footer">
+        <div class="footer-main">
+            <div class="footer-content">
+                <!-- Company Info Section-->
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <div class="logo-icon"> </div>
+                        <span>AgriTech</span>
+                    </div>
+                    <p class="footer-description">
+                        Empowering farmers worldwide with smart agricultural technology and sustainable farming
+                        solutions for a
+                        better tomorrow.
+                    </p>
+                    <div class="social-links">
+                        <a href="#" class="social-link" aria-label="Facebook">
+                            <span> </span>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Twitter">
+                            <span> </span>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Instagram">
+                            <span> </span>
+                        </a>
+                        <a href="#" class="social-link" aria-label="LinkedIn">
+                            <span> </span>
+                        </a>
+                        <a href="#" class="social-link" aria-label="YouTube">
+                            <span> </span>
+                        </a>
+                    </div>
+                </div>
+                <!-- Quick Links Section-->
+                <div class="footer-section">
+                    <h4 class="footer-title">Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="#" onclick="navigateTo('home')">Home</a></li>
+                        <li><a href="#" onclick="navigateTo('fertilizers')">Fertilizers</a></li>
+                        <li><a href="#" onclick="navigateTo('crops')">Crop Management</a></li>
+                        <li><a href="#" onclick="navigateTo('analytics')">Analytics</a></li>
+                        <li><a href="#" onclick="navigateTo('weather')">Weather</a></li>
+                        <li><a href="#" onclick="navigateTo('marketplace')">Marketplace</a></li>
+                    </ul>
+                </div>
+                <!-- Services Section-->
+                <div class="footer-section">
+                    <h4 class="footer-title">Our Services</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Soil Analysis</a></li>
+                        <li><a href="#">Crop Planning</a></li>
+                        <li><a href="#">Pest Management</a></li>
+                        <li><a href="#">Irrigation Systems</a></li>
+                        <li><a href="#">Farm Consulting</a></li>
+                        <li><a href="#">Equipment Rental</a></li>
+                    </ul>
+                </div>
+                <!-- Support Section-->
+                <div class="footer-section">
+                    <h4 class="footer-title">Support</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">API Reference</a></li>
+                        <li><a href="#">Community Forum</a></li>
+                        <li><a href="#" onclick="navigateTo('contact')">Contact Us</a></li>
+                        <li><a href="#">Live Chat</a></li>
+                    </ul>
+                </div>
+                <!-- Contact Info Section-->
+                <div class="footer-section">
+                    <h4 class="footer-title">Contact Info</h4>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <span class="contact-icon"> </span>
+                            <div>
+                                <p>123 Agriculture Street</p>
+                                <p>Farm City, FC 12345</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon"> </span>
+                            <div>
+                                <p>+1 (555) 123-4567</p>
+                                <p>24/7 Support Available</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon"> </span>
+                            <div>
+                                <p>info@agritech.com</p>
+                                <p>support@agritech.com</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Newsletter Section-->
+        <div class="newsletter-section">
+            <div class="newsletter-content">
+                <div class="newsletter-text">
+                    <h3>Stay Updated with AgriTech</h3>
+                    <p>Subscribe to our newsletter for the latest farming tips, technology updates, and exclusive
+                        offers.</p>
+                </div>
+                <div class="newsletter-form">
+                    <div class="input-group">
+                        <input type="email" id="newsletter-email" placeholder="Enter your email address" required>
+                        <button type="button" class="subscribe-btn" onclick="subscribeNewsletter()">
+                            <span>Subscribe</span>
+                            <span class="btn-icon"> </span>
+                        </button>
+                    </div>
+                    <p class="newsletter-privacy">We respect your privacy. Unsubscribe at any time.</p>
+                </div>
+            </div>
+        </div>
+        <!-- Bottom Footer-->
+        <div class="footer-bottom">
+            <div class="footer-bottom-content">
+                <div class="copyright">
+                    <p>&copy; 2025 AgriTech. All rights reserved.</p>
+                </div>
+                <div class="footer-bottom-links">
+                    <a href="#">Privacy Policy</a>
+                    <span class="separator">|</span>
+                    <a href="#">Terms of Service</a>
+                    <span class="separator">|</span>
+                    <a href="#">Cookie Policy</a>
+                    <span class="separator">|</span>
+                    <a href="#">Sitemap</a>
+                </div>
+                <div class="certifications">
+                    <span class="cert-badge"> Eco-Certified</span>
+                    <span class="cert-badge"> ISO 9001</span>
+                </div>
+            </div>
+        </div>
+        <!-- Back to Top Button-->
+        <button class="back-to-top" id="backToTop" onclick="scrollToTop()" title="Back to top">
+            <span> </span>
+        </button>
+    </footer>
+    <script>
+        // Navigation functionality
+        function navigateTo(pageId) {
+            // Hide all pages
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+            // Showtarget page
+            document.getElementById(pageId).classList.add('active');
+            // Update navigation links
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => link.classList.remove('active'));
+            // Find and activate current nav link
+            const currentLink = document.querySelector(`[onclick="navigateTo('${pageId}')"]`);
+            if (currentLink) {
+                currentLink.classList.add('active');
+            }
+            // Close mobile menu if open
+            document.getElementById('nav-links').classList.remove('active');
+        }
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const navLinks = document.getElementById('nav-links');
+            navLinks.classList.toggle('active');
+        }
+        // Animated counter for stats
+        function animateCounter(elementId, target, duration = 2000) {
+            const element = document.getElementById(elementId);
+            let start = 0;
+            const increment = target / (duration / 16);
+            const timer = setInterval(() => {
+                start += increment;
+                if (start >= target) {
+                    element.textContent = target;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(start);
+                }
+            }, 16);
+        }
+        // Initialize counters when home page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            animateCounter('farmers-count', 1000);
+            animateCounter('crops-count', 50);
+            animateCounter('fertilizers-count', 200);
+            animateCounter('yield-improvement', 35);
+        });
+        // Search fertilizers function
+        function searchFertilizers() {
+            const searchTerm = document.getElementById('fertilizer-search').value.toLowerCase();
+            const typeFilter = document.getElementById('fertilizer-type-filter').value;
+            const cards = document.querySelectorAll('.fertilizer-card');
+            cards.forEach(card => {
+                const name = card.querySelector('h3').textContent.toLowerCase();
+                const type = card.querySelector('.fertilizer-type').classList.contains(typeFilter) || typeFilter === '';
+                const matchesSearch = name.includes(searchTerm) || searchTerm === '';
+                if (matchesSearch && type) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        // Show crop details function
+        function showCropDetails(category) {
+            alert(`Showing details for ${category} crops. This would open a detailed view in a full application.`);
+        }
+        // Add fertilizer form submission
+        document.getElementById('add-fertilizer-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            alert('Fertilizer added successfully! In a real application, this would save to a database.');
+            this.reset();
+        });
+        // Add someinteractivity to cards
+        document.addEventListener('DOMContentLoaded', function () {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function () {
+                    this.style.transform = 'translateY(-5px)';
+                });
+                card.addEventListener('mouseleave', function () {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+        // Smooth scrolling for better UX
+        document.addEventListener('DOMContentLoaded', function () {
+            // Add smoothtransitions
+            const style = document.createElement('style');
+            style.textContent = `
+ * {
+ transition: all 0.3s ease;
+ }
+ `;
+            document.head.appendChild(style);
+        });
+        // Newsletter subscription function
+        function subscribeNewsletter() {
+            const email = document.getElementById('newsletter-email').value;
+            if (!email) {
+                alert('Please enter your email address');
+                return;
+            }
+            if (!isValidEmail(email)) {
+                alert('Please enter a valid email address');
+                return;
+            }
+            // Simulate subscription process
+            const btn = document.querySelector('.subscribe-btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span>Subscribing...</span><span>⏳ </span>';
+            btn.disabled = true;
+            setTimeout(() => {
+                btn.innerHTML = '<span>Subscribed!</span><span>✅</span>';
+                document.getElementById('newsletter-email').value = '';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }, 2000);
+            }, 1500);
+        }
+        // Email validation function
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+        // Back to top functionality
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        // Show/hide back to top button based on scroll position
+        window.addEventListener('scroll', function () {
+            const backToTopBtn = document.getElementById('backToTop');
+            if (window.pageYOffset > 300) {
+                backToTopBtn.classList.add('visible');
+            } else {
+                backToTopBtn.classList.remove('visible');
+            }
+        });
+        // Newsletter form submit on Enter key
+        document.addEventListener('DOMContentLoaded', function () {
+            const newsletterInput = document.getElementById('newsletter-email');
+            if (newsletterInput) {
+                newsletterInput.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        subscribeNewsletter();
+                    }
+                });
+            }
+        });
+        // Add smooth hover animations
+        document.addEventListener('DOMContentLoaded', function () {
+            const socialLinks = document.querySelectorAll('.social-link');
+            socialLinks.forEach(link => {
+                link.addEventListener('mouseenter', function () {
+                    this.style.transform = 'translateY(-3px) scale(1.1)';
+                });
+                link.addEventListener('mouseleave', function () {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
